@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>負け投資日記</title>
+<meta name="description" content="投資の負けトレードを記録し、原因を検索・振り返るための日記アプリ">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#2A5680">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="負け投資日記">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" href="./icons/icon-192.png">
+<style>
+  html,body{
+    margin:0;
+    padding:0;
+    background:#EAF1F7;
+  }
+  @media (prefers-color-scheme: dark){
+    html,body{ background:#11181F; }
+  }
+  .ndn-app{
+    border-radius:0 !important;
+    min-height:100vh;
+    max-width:none !important;
+    padding-top:max(1.5rem, env(safe-area-inset-top)) !important;
+    padding-bottom:max(3rem, env(safe-area-inset-bottom)) !important;
+    padding-left:max(1.25rem, env(safe-area-inset-left)) !important;
+    padding-right:max(1.25rem, env(safe-area-inset-right)) !important;
+  }
+</style>
+</head>
+<body>
+<div class="ndn-app">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EAF1F7;
+  --paper-alt:#DCE8F2;
+  --line:#C3D6E6;
+  --ink:#2C4356;
+  --ink-soft:#6E8AA0;
+  --red:#3E72A8;
+  --red-soft:#DCEAF7;
+  --red-deep:#2A5680;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#11181F;
+    --paper-alt:#1A2530;
+    --line:#2C3E4F;
+    --ink:#DCE6EF;
+    --ink-soft:#8FA7BD;
+    --red:#6FA8D8;
+    --red-soft:#1E3344;
+    --red-deep:#9CC4EA;
+  }
+}
+.ndn-app *{box-sizing:border-box;}
+.ndn-app{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  color:var(--ink);
+  max-width:720px;
+  margin:0 auto;
+  padding:1.5rem 1.25rem 3rem;
+  background:var(--paper);
+  border-radius:12px;
+  line-height:1.6;
+}
+.ndn-header{
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  margin-bottom:2rem;
+  flex-wrap:wrap;
+}
+.ndn-stamp{
+  width:64px;height:64px;
+  border:3px double var(--red);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Shippori Mincho',serif;
+  font-weight:700;
+  font-size:20px;
+  color:var(--red);
+  transform:rotate(-8deg);
+  letter-spacing:0.1em;
+  flex-shrink:0;
+}
+.ndn-title{
+  font-family:'Shippori Mincho',serif;
+  font-size:28px;
+  font-weight:700;
+  margin:0 0 4px;
+  letter-spacing:0.05em;
+}
+.ndn-tagline{
+  margin:0;
+  font-size:13px;
+  color:var(--ink-soft);
+}
+.ndn-card{
+  background:var(--paper-alt);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:1.25rem;
+  margin-bottom:1.5rem;
+}
+.ndn-card-title{
+  font-family:'Shippori Mincho',serif;
+  font-size:16px;
+  font-weight:700;
+  margin:0 0 1rem;
+  border-bottom:1px solid var(--line);
+  padding-bottom:0.5rem;
+}
+.ndn-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:0 1rem;
+}
+.ndn-field{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  margin-bottom:1rem;
+}
+.ndn-label{
+  font-size:12px;
+  color:var(--ink-soft);
+  letter-spacing:0.05em;
+}
+.ndn-field input,.ndn-field textarea,.ndn-field select{
+  font-family:inherit;
+  font-size:14px;
+  color:var(--ink);
+  background:transparent;
+  border:none;
+  border-bottom:1px solid var(--line);
+  padding:6px 2px;
+  outline:none;
+  width:100%;
+  resize:vertical;
+}
+.ndn-field input:focus,.ndn-field textarea:focus,.ndn-field select:focus{
+  border-bottom:1px solid var(--red);
+}
+.ndn-field select option{
+  background:var(--paper);
+  color:var(--ink);
+}
+.ndn-field input[type=number]{
+  font-family:'JetBrains Mono',monospace;
+}
+.ndn-pnl-row{
+  display:flex;
+  align-items:baseline;
+  gap:0.5rem;
+  margin-bottom:1rem;
+  padding-bottom:1rem;
+  border-bottom:1px solid var(--line);
+}
+.ndn-pnl{
+  font-family:'JetBrains Mono',monospace;
+  font-size:20px;
+  font-weight:500;
+}
+.ndn-pnl.neg{color:var(--red);}
+.ndn-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:6px 0;
+}
+.ndn-tag{
+  font-size:12px;
+  padding:4px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:transparent;
+  color:var(--ink-soft);
+  cursor:pointer;
+  font-family:inherit;
+}
+.ndn-tag.active{
+  border-color:var(--red);
+  color:var(--red-deep);
+  background:var(--red-soft);
+}
+.ndn-tag.info{
+  border-color:var(--ink-soft);
+  color:var(--ink);
+  background:var(--paper);
+}
+.ndn-entry-meta{
+  font-size:12px;
+  color:var(--ink-soft);
+  margin-top:4px;
+  line-height:1.7;
+}
+.ndn-tag-add{
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+}
+.ndn-tag-add input{
+  flex:1;
+  font-size:12px;
+  padding:6px 8px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:transparent;
+  color:var(--ink);
+  font-family:inherit;
+}
+.ndn-tag-add button{
+  font-size:12px;
+  padding:6px 12px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:transparent;
+  color:var(--ink);
+  cursor:pointer;
+  font-family:inherit;
+}
+.ndn-submit{
+  font-family:'Shippori Mincho',serif;
+  font-size:15px;
+  font-weight:700;
+  padding:10px 28px;
+  border:2px solid var(--red);
+  border-radius:6px;
+  background:transparent;
+  color:var(--red-deep);
+  cursor:pointer;
+  letter-spacing:0.1em;
+}
+.ndn-submit:hover{background:var(--red-soft);}
+.ndn-filter input[type=text]{
+  width:100%;
+  font-size:14px;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:transparent;
+  color:var(--ink);
+  margin-bottom:0.75rem;
+  font-family:inherit;
+}
+#s-clear{
+  font-size:12px;
+  padding:6px 12px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:transparent;
+  color:var(--ink-soft);
+  cursor:pointer;
+  margin-top:0.5rem;
+  font-family:inherit;
+}
+.ndn-stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:12px;
+  margin-bottom:1.5rem;
+}
+.ndn-stat{
+  background:var(--paper-alt);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:0.75rem 1rem;
+}
+.ndn-stat-label{
+  font-size:11px;
+  color:var(--ink-soft);
+  margin-bottom:4px;
+}
+.ndn-stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:18px;
+  font-weight:500;
+}
+.ndn-entry{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:1rem;
+  margin-bottom:0.75rem;
+  position:relative;
+}
+.ndn-entry-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:6px;
+  padding-right:80px;
+}
+.ndn-entry-date{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--ink-soft);
+}
+.ndn-entry-ticker{
+  font-weight:700;
+  font-size:15px;
+}
+.ndn-entry-amounts{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  color:var(--ink-soft);
+}
+.ndn-entry-pnl{
+  font-family:'JetBrains Mono',monospace;
+  font-size:16px;
+  font-weight:500;
+  color:var(--red);
+}
+.ndn-entry-note{
+  font-size:13px;
+  color:var(--ink-soft);
+  margin-top:6px;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+.ndn-entry-actions{
+  position:absolute;
+  top:12px;
+  right:12px;
+  display:flex;
+  gap:10px;
+}
+.ndn-entry-edit,.ndn-entry-delete{
+  font-size:11px;
+  border:none;
+  background:transparent;
+  color:var(--ink-soft);
+  cursor:pointer;
+  font-family:inherit;
+}
+.ndn-entry-edit:hover{color:var(--red-deep);}
+.ndn-entry-delete:hover{color:var(--red);}
+.ndn-export-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:1.25rem;
+}
+.ndn-export-btn{
+  font-family:inherit;
+  font-size:13px;
+  padding:8px 16px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:transparent;
+  color:var(--ink-soft);
+  cursor:pointer;
+}
+.ndn-export-btn:hover{
+  border-color:var(--red);
+  color:var(--red-deep);
+}
+.ndn-empty{
+  text-align:center;
+  color:var(--ink-soft);
+  font-size:13px;
+  padding:2rem 0;
+}
+</style>
+
+<header class="ndn-header">
+  <div class="ndn-stamp">反省</div>
+  <div>
+    <h1 class="ndn-title">負け投資日記</h1>
+    <p class="ndn-tagline">同じ負け方を、二度としないために記録する。</p>
+  </div>
+</header>
+
+<section class="ndn-card ndn-form">
+  <h2 class="ndn-card-title" id="f-section-title">新しい記録</h2>
+  <div class="ndn-grid">
+    <label class="ndn-field">
+      <span class="ndn-label">日付</span>
+      <input type="date" id="f-date">
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label">銘柄・コード</span>
+      <input type="text" id="f-ticker" placeholder="例）8035 東京エレクトロン">
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label">取引方向</span>
+      <select id="f-direction">
+        <option value="買い建て">買い建て（ロング）</option>
+        <option value="売り立て">売り立て（ショート）</option>
+      </select>
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label">株数</span>
+      <input type="number" id="f-qty" placeholder="例）100" min="0" inputmode="numeric">
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label">エントリー時刻</span>
+      <input type="time" id="f-entry-time">
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label">決済時刻</span>
+      <input type="time" id="f-exit-time">
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label" id="f-buy-label">新規（買い）単価（円）</span>
+      <input type="number" id="f-buy" placeholder="0" min="0" inputmode="numeric">
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label" id="f-sell-label">決済（売り）単価（円）</span>
+      <input type="number" id="f-sell" placeholder="0" min="0" inputmode="numeric">
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label">計画損切価格（1株）</span>
+      <input type="number" id="f-plan-stop" placeholder="例）2450" min="0" inputmode="numeric">
+    </label>
+    <label class="ndn-field">
+      <span class="ndn-label">計画目標価格（1株）</span>
+      <input type="number" id="f-plan-target" placeholder="例）2600" min="0" inputmode="numeric">
+    </label>
+  </div>
+  <div class="ndn-pnl-row">
+    <span class="ndn-label">損益</span>
+    <span id="f-pnl" class="ndn-pnl">¥0</span>
+    <span id="f-pnl-per-share" class="ndn-label" style="margin-left:auto;"></span>
+  </div>
+  <div class="ndn-field">
+    <span class="ndn-label">負けた理由（タップでON/OFF・複数選択可）</span>
+    <div class="ndn-tags" id="f-reason-tags"></div>
+    <div class="ndn-tag-add">
+      <input type="text" id="f-tag-new" placeholder="理由を追加（自由入力）">
+      <button id="f-tag-add-btn" type="button">追加</button>
+    </div>
+  </div>
+  <div class="ndn-field">
+    <span class="ndn-label">エントリー根拠（タップでON/OFF・複数選択可）</span>
+    <div class="ndn-tags" id="f-signal-tags"></div>
+    <div class="ndn-tag-add">
+      <input type="text" id="f-signal-tag-new" placeholder="根拠を追加（自由入力）">
+      <button id="f-signal-tag-add-btn" type="button">追加</button>
+    </div>
+  </div>
+  <div class="ndn-field">
+    <span class="ndn-label">日経平均・SOX指数の動き（タップでON/OFF・複数選択可）</span>
+    <div class="ndn-tags" id="f-market-tags"></div>
+    <div class="ndn-tag-add">
+      <input type="text" id="f-market-tag-new" placeholder="市場環境タグを追加（自由入力）">
+      <button id="f-market-tag-add-btn" type="button">追加</button>
+    </div>
+  </div>
+  <label class="ndn-field">
+    <span class="ndn-label">振り返りメモ</span>
+    <textarea id="f-note" rows="3" placeholder="何を見落としたか、次はどうするか"></textarea>
+  </label>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <button id="f-submit" class="ndn-submit" type="button">記録する</button>
+    <button id="f-cancel-edit" type="button" style="display:none;font-family:inherit;font-size:13px;padding:8px 16px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--ink-soft);cursor:pointer;">編集をやめる</button>
+  </div>
+</section>
+
+<section class="ndn-card ndn-filter">
+  <h2 class="ndn-card-title">記録を検索</h2>
+  <input type="text" id="s-keyword" placeholder="銘柄・理由・メモで検索">
+  <div class="ndn-tags" id="s-reason-tags"></div>
+  <button id="s-clear" type="button">条件をクリア</button>
+</section>
+
+<div class="ndn-export-row">
+  <button id="export-filtered" type="button" class="ndn-export-btn">表示中の記録をCSVで書き出す</button>
+  <button id="export-all" type="button" class="ndn-export-btn">全件をCSVで書き出す</button>
+</div>
+
+<div class="ndn-stats" id="stats"></div>
+
+<div id="entries"></div>
+
+</div>
+
+<script>
+(function(){
+  var PRESET_REASONS = [
+    "損切りが遅れた",
+    "利益確定が早すぎた",
+    "トレンド転換の見極めミス",
+    "下落途中でのエントリー",
+    "指標シグナルの解釈ミス",
+    "感情的な判断",
+    "ポジションサイズ過大",
+    "ニュース・イベントの影響",
+    "根拠なきナンピン",
+    "計画と異なる判断"
+  ];
+
+  var PRESET_SIGNALS = [
+    "MACDクロス",
+    "ストキャスティクス",
+    "RSI",
+    "移動平均線",
+    "出来高急増",
+    "ブレイクアウト",
+    "サポート/レジスタンス",
+    "ニュース・指標"
+  ];
+
+  var PRESET_MARKET = [
+    "日経平均上昇",
+    "日経平均下落",
+    "SOX指数上昇",
+    "SOX指数下落",
+    "個別株要因が強い",
+    "指数と逆行"
+  ];
+
+  var trades = [];
+  var editingId = null;
+  var customTags = [];
+  var customSignalTags = [];
+  var customMarketTags = [];
+  var selectedFormTags = new Set();
+  var selectedFilterTags = new Set();
+  var selectedSignalTags = new Set();
+  var selectedMarketTags = new Set();
+
+  var fDate = document.getElementById('f-date');
+  var fTicker = document.getElementById('f-ticker');
+  var fDirection = document.getElementById('f-direction');
+  var fQty = document.getElementById('f-qty');
+  var fEntryTime = document.getElementById('f-entry-time');
+  var fExitTime = document.getElementById('f-exit-time');
+  var fBuy = document.getElementById('f-buy');
+  var fSell = document.getElementById('f-sell');
+  var fBuyLabel = document.getElementById('f-buy-label');
+  var fSellLabel = document.getElementById('f-sell-label');
+  var fPlanStop = document.getElementById('f-plan-stop');
+  var fPlanTarget = document.getElementById('f-plan-target');
+  var fPnl = document.getElementById('f-pnl');
+  var fPnlPerShare = document.getElementById('f-pnl-per-share');
+  var fNote = document.getElementById('f-note');
+  var fReasonTags = document.getElementById('f-reason-tags');
+  var fTagNew = document.getElementById('f-tag-new');
+  var fTagAddBtn = document.getElementById('f-tag-add-btn');
+  var fSignalTags = document.getElementById('f-signal-tags');
+  var fSignalTagNew = document.getElementById('f-signal-tag-new');
+  var fSignalTagAddBtn = document.getElementById('f-signal-tag-add-btn');
+  var fMarketTags = document.getElementById('f-market-tags');
+  var fMarketTagNew = document.getElementById('f-market-tag-new');
+  var fMarketTagAddBtn = document.getElementById('f-market-tag-add-btn');
+  var fSubmit = document.getElementById('f-submit');
+  var fCancelEdit = document.getElementById('f-cancel-edit');
+  var fSectionTitle = document.getElementById('f-section-title');
+
+  var sKeyword = document.getElementById('s-keyword');
+  var sReasonTags = document.getElementById('s-reason-tags');
+  var sClear = document.getElementById('s-clear');
+
+  var statsEl = document.getElementById('stats');
+  var entriesEl = document.getElementById('entries');
+
+  function yen(n){
+    var v = Math.round(n || 0);
+    return '¥' + v.toLocaleString('ja-JP');
+  }
+
+  function mergeTags(presets, custom){
+    var set = [];
+    presets.concat(custom).forEach(function(t){
+      if(set.indexOf(t) === -1) set.push(t);
+    });
+    return set;
+  }
+  function allTags(){ return mergeTags(PRESET_REASONS, customTags); }
+  function allSignalTags(){ return mergeTags(PRESET_SIGNALS, customSignalTags); }
+  function allMarketTags(){ return mergeTags(PRESET_MARKET, customMarketTags); }
+
+  // PWA単独動作用: window.storage（Claudeアーティファクト専用API）を
+  // localStorageベースの互換実装に置き換える。
+  // データはこのブラウザ・このデバイスのみに保存される。
+  if(!window.storage){
+    window.storage = {
+      _prefix: 'ndn-diary:',
+      get: async function(key, shared){
+        var raw = localStorage.getItem(this._prefix + key);
+        if(raw === null) return null;
+        return { key: key, value: raw, shared: !!shared };
+      },
+      set: async function(key, value, shared){
+        localStorage.setItem(this._prefix + key, value);
+        return { key: key, value: value, shared: !!shared };
+      },
+      delete: async function(key, shared){
+        var existed = localStorage.getItem(this._prefix + key) !== null;
+        localStorage.removeItem(this._prefix + key);
+        return { key: key, deleted: existed, shared: !!shared };
+      },
+      list: async function(prefix, shared){
+        var keys = [];
+        var fullPrefix = this._prefix + (prefix || '');
+        for(var i = 0; i < localStorage.length; i++){
+          var k = localStorage.key(i);
+          if(k.indexOf(fullPrefix) === 0){
+            keys.push(k.slice(this._prefix.length));
+          }
+        }
+        return { keys: keys, prefix: prefix, shared: !!shared };
+      }
+    };
+  }
+
+  async function load(){
+    try{
+      var t = await window.storage.get('trades', false);
+      trades = t ? JSON.parse(t.value) : [];
+    }catch(e){ trades = []; }
+    try{
+      var c = await window.storage.get('customTags', false);
+      customTags = c ? JSON.parse(c.value) : [];
+    }catch(e){ customTags = []; }
+    try{
+      var cs = await window.storage.get('customSignalTags', false);
+      customSignalTags = cs ? JSON.parse(cs.value) : [];
+    }catch(e){ customSignalTags = []; }
+    try{
+      var cm = await window.storage.get('customMarketTags', false);
+      customMarketTags = cm ? JSON.parse(cm.value) : [];
+    }catch(e){ customMarketTags = []; }
+    renderFormTags();
+    renderFilterTags();
+    renderSignalTags();
+    renderMarketTags();
+    renderAll();
+  }
+
+  async function saveTrades(){
+    try{ await window.storage.set('trades', JSON.stringify(trades), false); }catch(e){}
+  }
+  async function saveCustomTags(){
+    try{ await window.storage.set('customTags', JSON.stringify(customTags), false); }catch(e){}
+  }
+  async function saveCustomSignalTags(){
+    try{ await window.storage.set('customSignalTags', JSON.stringify(customSignalTags), false); }catch(e){}
+  }
+  async function saveCustomMarketTags(){
+    try{ await window.storage.set('customMarketTags', JSON.stringify(customMarketTags), false); }catch(e){}
+  }
+
+  function renderFormTags(){
+    fReasonTags.innerHTML = '';
+    allTags().forEach(function(tag){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ndn-tag' + (selectedFormTags.has(tag) ? ' active' : '');
+      btn.textContent = tag;
+      btn.addEventListener('click', function(){
+        if(selectedFormTags.has(tag)){
+          selectedFormTags.delete(tag);
+        }else{
+          selectedFormTags.add(tag);
+        }
+        renderFormTags();
+      });
+      fReasonTags.appendChild(btn);
+    });
+  }
+
+  function renderFilterTags(){
+    sReasonTags.innerHTML = '';
+    allTags().forEach(function(tag){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ndn-tag' + (selectedFilterTags.has(tag) ? ' active' : '');
+      btn.textContent = tag;
+      btn.addEventListener('click', function(){
+        if(selectedFilterTags.has(tag)){
+          selectedFilterTags.delete(tag);
+        }else{
+          selectedFilterTags.add(tag);
+        }
+        renderFilterTags();
+        renderAll();
+      });
+      sReasonTags.appendChild(btn);
+    });
+  }
+
+  function renderSignalTags(){
+    fSignalTags.innerHTML = '';
+    allSignalTags().forEach(function(tag){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ndn-tag' + (selectedSignalTags.has(tag) ? ' active' : '');
+      btn.textContent = tag;
+      btn.addEventListener('click', function(){
+        if(selectedSignalTags.has(tag)){
+          selectedSignalTags.delete(tag);
+        }else{
+          selectedSignalTags.add(tag);
+        }
+        renderSignalTags();
+      });
+      fSignalTags.appendChild(btn);
+    });
+  }
+
+  function renderMarketTags(){
+    fMarketTags.innerHTML = '';
+    allMarketTags().forEach(function(tag){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ndn-tag' + (selectedMarketTags.has(tag) ? ' active' : '');
+      btn.textContent = tag;
+      btn.addEventListener('click', function(){
+        if(selectedMarketTags.has(tag)){
+          selectedMarketTags.delete(tag);
+        }else{
+          selectedMarketTags.add(tag);
+        }
+        renderMarketTags();
+      });
+      fMarketTags.appendChild(btn);
+    });
+  }
+
+  function updateDirectionLabels(){
+    if(fDirection.value === '売り立て'){
+      fBuyLabel.textContent = '決済（買い戻し）単価（円）';
+      fSellLabel.textContent = '新規（売り）単価（円）';
+    }else{
+      fBuyLabel.textContent = '新規（買い）単価（円）';
+      fSellLabel.textContent = '決済（売り）単価（円）';
+    }
+  }
+  fDirection.addEventListener('change', function(){
+    updateDirectionLabels();
+    updatePnlPreview();
+  });
+
+  // 買い建て: buy=新規買い単価, sell=決済売り単価 → 損益 = (売-買)×株数
+  // 売り立て: buy=決済買戻し単価, sell=新規売り単価 → 損益 = (売-買)×株数 ※同じ式でよい
+  function calcPnl(direction, buy, sell, qty){
+    var q = qty > 0 ? qty : 1;
+    return (sell - buy) * q;
+  }
+
+  function updatePnlPreview(){
+    var buy = parseFloat(fBuy.value) || 0;
+    var sell = parseFloat(fSell.value) || 0;
+    var qty = parseFloat(fQty.value) || 0;
+    var pnl = calcPnl(fDirection.value, buy, sell, qty);
+    fPnl.textContent = yen(pnl);
+    fPnl.className = 'ndn-pnl' + (pnl < 0 ? ' neg' : '');
+    fPnlPerShare.textContent = qty > 0 ? ('単価差 ' + yen(sell - buy) + ' / 株') : '';
+  }
+  fBuy.addEventListener('input', updatePnlPreview);
+  fSell.addEventListener('input', updatePnlPreview);
+  fQty.addEventListener('input', updatePnlPreview);
+
+  fTagAddBtn.addEventListener('click', function(){
+    var val = fTagNew.value.trim();
+    if(!val) return;
+    if(allTags().indexOf(val) === -1){
+      customTags.push(val);
+      saveCustomTags();
+    }
+    selectedFormTags.add(val);
+    fTagNew.value = '';
+    renderFormTags();
+    renderFilterTags();
+  });
+
+  fSignalTagAddBtn.addEventListener('click', function(){
+    var val = fSignalTagNew.value.trim();
+    if(!val) return;
+    if(allSignalTags().indexOf(val) === -1){
+      customSignalTags.push(val);
+      saveCustomSignalTags();
+    }
+    selectedSignalTags.add(val);
+    fSignalTagNew.value = '';
+    renderSignalTags();
+  });
+
+  fMarketTagAddBtn.addEventListener('click', function(){
+    var val = fMarketTagNew.value.trim();
+    if(!val) return;
+    if(allMarketTags().indexOf(val) === -1){
+      customMarketTags.push(val);
+      saveCustomMarketTags();
+    }
+    selectedMarketTags.add(val);
+    fMarketTagNew.value = '';
+    renderMarketTags();
+  });
+
+  function resetForm(){
+    fTicker.value = '';
+    fDirection.value = '買い建て';
+    fQty.value = '';
+    fEntryTime.value = '';
+    fExitTime.value = '';
+    fBuy.value = '';
+    fSell.value = '';
+    fPlanStop.value = '';
+    fPlanTarget.value = '';
+    fNote.value = '';
+    selectedFormTags = new Set();
+    selectedSignalTags = new Set();
+    selectedMarketTags = new Set();
+    updateDirectionLabels();
+    updatePnlPreview();
+    renderFormTags();
+    renderSignalTags();
+    renderMarketTags();
+  }
+
+  function exitEditMode(){
+    editingId = null;
+    fSubmit.textContent = '記録する';
+    fSectionTitle.textContent = '新しい記録';
+    fCancelEdit.style.display = 'none';
+    resetForm();
+  }
+
+  function startEdit(id){
+    var t = trades.find(function(x){ return x.id === id; });
+    if(!t) return;
+    editingId = id;
+    fSectionTitle.textContent = '記録を編集';
+    fSubmit.textContent = '更新する';
+    fCancelEdit.style.display = '';
+
+    fDate.value = t.date;
+    fTicker.value = t.ticker;
+    fDirection.value = t.direction || '買い建て';
+    fQty.value = t.qty || '';
+    fEntryTime.value = t.entryTime || '';
+    fExitTime.value = t.exitTime || '';
+    fBuy.value = t.buy || '';
+    fSell.value = t.sell || '';
+    fPlanStop.value = t.planStop || '';
+    fPlanTarget.value = t.planTarget || '';
+    fNote.value = t.note || '';
+    selectedFormTags = new Set(t.reasons || []);
+    selectedSignalTags = new Set(t.signals || []);
+    selectedMarketTags = new Set(t.market || []);
+
+    updateDirectionLabels();
+    updatePnlPreview();
+    renderFormTags();
+    renderSignalTags();
+    renderMarketTags();
+
+    document.querySelector('.ndn-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  fCancelEdit.addEventListener('click', exitEditMode);
+
+  fSubmit.addEventListener('click', async function(){
+    var date = fDate.value;
+    var ticker = fTicker.value.trim();
+    var buy = parseFloat(fBuy.value) || 0;
+    var sell = parseFloat(fSell.value) || 0;
+    if(!date || !ticker){
+      fTicker.focus();
+      return;
+    }
+    var qty = parseFloat(fQty.value) || 0;
+    var tradeData = {
+      date: date,
+      ticker: ticker,
+      direction: fDirection.value,
+      qty: qty,
+      entryTime: fEntryTime.value,
+      exitTime: fExitTime.value,
+      buy: buy,
+      sell: sell,
+      pnl: calcPnl(fDirection.value, buy, sell, qty),
+      planStop: parseFloat(fPlanStop.value) || 0,
+      planTarget: parseFloat(fPlanTarget.value) || 0,
+      reasons: Array.from(selectedFormTags),
+      signals: Array.from(selectedSignalTags),
+      market: Array.from(selectedMarketTags),
+      note: fNote.value.trim()
+    };
+
+    if(editingId){
+      var idx = trades.findIndex(function(x){ return x.id === editingId; });
+      if(idx !== -1){
+        tradeData.id = trades[idx].id;
+        tradeData.createdAt = trades[idx].createdAt;
+        tradeData.updatedAt = Date.now();
+        trades[idx] = tradeData;
+      }
+      await saveTrades();
+      exitEditMode();
+    }else{
+      tradeData.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      tradeData.createdAt = Date.now();
+      trades.push(tradeData);
+      await saveTrades();
+      resetForm();
+    }
+    renderAll();
+  });
+
+  sKeyword.addEventListener('input', renderAll);
+  sClear.addEventListener('click', function(){
+    sKeyword.value = '';
+    selectedFilterTags = new Set();
+    renderFilterTags();
+    renderAll();
+  });
+
+  async function deleteTrade(id){
+    trades = trades.filter(function(t){ return t.id !== id; });
+    await saveTrades();
+    if(editingId === id){
+      exitEditMode();
+    }
+    renderAll();
+  }
+
+  function filteredTrades(){
+    var kw = sKeyword.value.trim().toLowerCase();
+    return trades.filter(function(t){
+      if(selectedFilterTags.size > 0){
+        var has = t.reasons.some(function(r){ return selectedFilterTags.has(r); });
+        if(!has) return false;
+      }
+      if(kw){
+        var hay = (t.ticker + ' ' + (t.direction||'') + ' ' + t.note + ' ' + t.reasons.join(' ') + ' ' + (t.signals||[]).join(' ') + ' ' + (t.market||[]).join(' ')).toLowerCase();
+        if(hay.indexOf(kw) === -1) return false;
+      }
+      return true;
+    }).sort(function(a, b){
+      if(a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return b.createdAt - a.createdAt;
+    });
+  }
+
+  function csvEscape(val){
+    var s = (val === undefined || val === null) ? '' : String(val);
+    if(/[",\n]/.test(s)){
+      s = '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+
+  function tradesToCsv(list){
+    var headers = [
+      '日付','銘柄・コード','取引方向','株数',
+      'エントリー時刻','決済時刻',
+      '新規単価','決済単価','単価差','損益',
+      '計画損切価格','計画目標価格',
+      '負けた理由','エントリー根拠','市場環境',
+      '振り返りメモ'
+    ];
+    var rows = list.map(function(t){
+      return [
+        t.date,
+        t.ticker,
+        t.direction || '',
+        t.qty || '',
+        t.entryTime || '',
+        t.exitTime || '',
+        t.buy || '',
+        t.sell || '',
+        (t.sell - t.buy),
+        t.pnl,
+        t.planStop || '',
+        t.planTarget || '',
+        (t.reasons || []).join(' / '),
+        (t.signals || []).join(' / '),
+        (t.market || []).join(' / '),
+        t.note || ''
+      ].map(csvEscape).join(',');
+    });
+    return '\uFEFF' + headers.map(csvEscape).join(',') + '\n' + rows.join('\n');
+  }
+
+  function downloadCsv(list, filenamePrefix){
+    if(list.length === 0){
+      alert('書き出す記録がありません。');
+      return;
+    }
+    var csv = tradesToCsv(list);
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = filenamePrefix + '_' + stamp + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('export-filtered').addEventListener('click', function(){
+    downloadCsv(filteredTrades(), '負け投資日記_絞込');
+  });
+  document.getElementById('export-all').addEventListener('click', function(){
+    downloadCsv(trades.slice().sort(function(a, b){
+      if(a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return b.createdAt - a.createdAt;
+    }), '負け投資日記_全件');
+  });
+
+  function renderStats(list){
+    statsEl.innerHTML = '';
+    var count = list.length;
+    var totalPnl = 0;
+    var tagCount = {};
+    list.forEach(function(t){
+      totalPnl += t.pnl;
+      t.reasons.forEach(function(r){
+        tagCount[r] = (tagCount[r] || 0) + 1;
+      });
+    });
+    var topTag = '-';
+    var topCount = 0;
+    Object.keys(tagCount).forEach(function(r){
+      if(tagCount[r] > topCount){
+        topCount = tagCount[r];
+        topTag = r;
+      }
+    });
+    var items = [
+      { label: '記録件数', value: count + ' 件' },
+      { label: '損益合計', value: yen(totalPnl), neg: totalPnl < 0 },
+      { label: '最多の理由', value: topTag === '-' ? '-' : (topTag + '（' + topCount + '件）') }
+    ];
+    items.forEach(function(item){
+      var div = document.createElement('div');
+      div.className = 'ndn-stat';
+      var label = document.createElement('div');
+      label.className = 'ndn-stat-label';
+      label.textContent = item.label;
+      var value = document.createElement('div');
+      value.className = 'ndn-stat-value' + (item.neg ? ' neg' : '');
+      if(item.neg) value.style.color = 'var(--red)';
+      value.textContent = item.value;
+      div.appendChild(label);
+      div.appendChild(value);
+      statsEl.appendChild(div);
+    });
+  }
+
+  function holdingDuration(entryTime, exitTime){
+    if(!entryTime || !exitTime) return null;
+    var e = entryTime.split(':');
+    var x = exitTime.split(':');
+    var em = parseInt(e[0], 10) * 60 + parseInt(e[1], 10);
+    var xm = parseInt(x[0], 10) * 60 + parseInt(x[1], 10);
+    var diff = xm - em;
+    if(diff < 0) diff += 24 * 60;
+    var h = Math.floor(diff / 60);
+    var m = diff % 60;
+    if(h > 0) return h + '時間' + m + '分';
+    return m + '分';
+  }
+
+  function renderEntries(list){
+    entriesEl.innerHTML = '';
+    if(list.length === 0){
+      var empty = document.createElement('div');
+      empty.className = 'ndn-empty';
+      empty.textContent = trades.length === 0
+        ? 'まだ記録がありません。最初の負けトレードを記録してみましょう。'
+        : '条件に合う記録が見つかりません。';
+      entriesEl.appendChild(empty);
+      return;
+    }
+    list.forEach(function(t){
+      var div = document.createElement('div');
+      div.className = 'ndn-entry';
+
+      var actions = document.createElement('div');
+      actions.className = 'ndn-entry-actions';
+
+      var edit = document.createElement('button');
+      edit.className = 'ndn-entry-edit';
+      edit.type = 'button';
+      edit.textContent = '編集';
+      edit.addEventListener('click', function(){ startEdit(t.id); });
+      actions.appendChild(edit);
+
+      var del = document.createElement('button');
+      del.className = 'ndn-entry-delete';
+      del.type = 'button';
+      del.textContent = '削除';
+      del.addEventListener('click', function(){ deleteTrade(t.id); });
+      actions.appendChild(del);
+
+      div.appendChild(actions);
+
+      var top = document.createElement('div');
+      top.className = 'ndn-entry-top';
+
+      var left = document.createElement('div');
+      var dateEl = document.createElement('div');
+      dateEl.className = 'ndn-entry-date';
+      var dateText = t.date.replace(/-/g, '/');
+      if(t.entryTime || t.exitTime){
+        var timeText = (t.entryTime || '--:--') + ' → ' + (t.exitTime || '--:--');
+        var dur = holdingDuration(t.entryTime, t.exitTime);
+        if(dur) timeText += '（' + dur + '）';
+        dateText += '　' + timeText;
+      }
+      dateEl.textContent = dateText;
+      var tickerEl = document.createElement('div');
+      tickerEl.className = 'ndn-entry-ticker';
+      var directionBadge = t.direction === '売り立て' ? '【売り立て】' : '【買い建て】';
+      tickerEl.textContent = directionBadge + ' ' + t.ticker;
+      left.appendChild(dateEl);
+      left.appendChild(tickerEl);
+
+      var right = document.createElement('div');
+      right.style.textAlign = 'right';
+      var amountsEl = document.createElement('div');
+      amountsEl.className = 'ndn-entry-amounts';
+      var amountsText = t.direction === '売り立て'
+        ? (yen(t.sell) + '（新規売り単価） → ' + yen(t.buy) + '（買戻し単価）')
+        : (yen(t.buy) + '（新規買い単価） → ' + yen(t.sell) + '（決済売り単価）');
+      if(t.qty > 0){
+        amountsText += '（' + t.qty.toLocaleString('ja-JP') + '株 / 単価差 ' + yen(t.sell - t.buy) + '）';
+      }
+      amountsEl.textContent = amountsText;
+      var pnlEl = document.createElement('div');
+      pnlEl.className = 'ndn-entry-pnl';
+      pnlEl.textContent = yen(t.pnl);
+      right.appendChild(amountsEl);
+      right.appendChild(pnlEl);
+
+      top.appendChild(left);
+      top.appendChild(right);
+      div.appendChild(top);
+
+      if((t.planStop > 0 || t.planTarget > 0)){
+        var metaParts = [];
+        var actualPrice = t.direction === '売り立て' ? t.buy : t.sell;
+        if(t.planStop > 0){
+          metaParts.push('計画損切 ' + yen(t.planStop) + ' → 実際 ' + yen(actualPrice) + '（差 ' + yen(actualPrice - t.planStop) + '）');
+        }
+        if(t.planTarget > 0){
+          metaParts.push('計画目標 ' + yen(t.planTarget) + ' → 実際 ' + yen(actualPrice) + '（差 ' + yen(actualPrice - t.planTarget) + '）');
+        }
+        var metaEl = document.createElement('div');
+        metaEl.className = 'ndn-entry-meta';
+        metaEl.textContent = metaParts.join('　');
+        div.appendChild(metaEl);
+      }
+
+      var hasTags = t.reasons.length > 0 || (t.signals && t.signals.length) || (t.market && t.market.length);
+      if(hasTags){
+        var tagsEl = document.createElement('div');
+        tagsEl.className = 'ndn-tags';
+        t.reasons.forEach(function(r){
+          var tag = document.createElement('span');
+          tag.className = 'ndn-tag active';
+          tag.style.cursor = 'default';
+          tag.textContent = r;
+          tagsEl.appendChild(tag);
+        });
+        (t.signals || []).forEach(function(r){
+          var tag = document.createElement('span');
+          tag.className = 'ndn-tag info';
+          tag.style.cursor = 'default';
+          tag.textContent = r;
+          tagsEl.appendChild(tag);
+        });
+        (t.market || []).forEach(function(r){
+          var tag = document.createElement('span');
+          tag.className = 'ndn-tag info';
+          tag.style.cursor = 'default';
+          tag.textContent = r;
+          tagsEl.appendChild(tag);
+        });
+        div.appendChild(tagsEl);
+      }
+
+      if(t.note){
+        var noteEl = document.createElement('div');
+        noteEl.className = 'ndn-entry-note';
+        noteEl.textContent = t.note;
+        div.appendChild(noteEl);
+      }
+
+      entriesEl.appendChild(div);
+    });
+  }
+
+
+  function renderAll(){
+    var list = filteredTrades();
+    renderStats(list);
+    renderEntries(list);
+  }
+
+  fDate.value = new Date().toISOString().slice(0, 10);
+  updateDirectionLabels();
+  updatePnlPreview();
+  load();
+})();
+</script>
+
+</div>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(err){
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
+</script>
+
+</body>
+</html>
